@@ -1,13 +1,13 @@
-const handleReturnValue = (returnVal, prevContext) =>
-  typeof returnVal === "object"
-    ? [true, Object.assign({}, prevContext, returnVal)]
-    : [returnVal === false ? false : true, context];
+const handleReturnValue = (value, prevState) =>
+  typeof value === "object"
+    ? [true, Object.assign({}, prevState, value)]
+    : [value === false ? false : true, context];
 
 const callFunction = (fn, context) => handleReturnValue(fn(context), context);
 
-export default functions =>
+export default (functions, initialState = {}) =>
   functions.reduce(
-    ([doNext, context], fn) =>
-      doNext ? callFunction(fn, context) : [false, context],
-    [true, {}]
+    ([doNext, state], fn) =>
+      doNext ? callFunction(fn, state) : [false, state],
+    [true, initialState || {}]
   )[1];

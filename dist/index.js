@@ -29,8 +29,8 @@
     };
   }
 
-  var handleReturnValue = function handleReturnValue(returnVal, prevContext) {
-    return (typeof returnVal === "undefined" ? "undefined" : (0, _typeof3.default)(returnVal)) === "object" ? [true, (0, _assign2.default)({}, prevContext, returnVal)] : [returnVal === false ? false : true, context];
+  var handleReturnValue = function handleReturnValue(value, prevState) {
+    return (typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value)) === "object" ? [true, (0, _assign2.default)({}, prevState, value)] : [value === false ? false : true, context];
   };
 
   var callFunction = function callFunction(fn, context) {
@@ -38,12 +38,13 @@
   };
 
   exports.default = function (functions) {
+    var initialState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     return functions.reduce(function (_ref, fn) {
       var _ref2 = (0, _slicedToArray3.default)(_ref, 2),
           doNext = _ref2[0],
-          context = _ref2[1];
+          state = _ref2[1];
 
-      return doNext ? callFunction(fn, context) : [false, context];
-    }, [true, {}])[1];
+      return doNext ? callFunction(fn, state) : [false, state];
+    }, [true, initialState || {}])[1];
   };
 });

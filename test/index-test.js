@@ -36,4 +36,10 @@ describe("helper", () => {
     const actual = everyFn(input);
     assert.deepEqual(expected, actual);
   });
+
+  it("utilizes initial state", () => {
+    const expected = { a: true };
+    const actual = everyFn([], expected);
+    assert.deepEqual(expected, actual);
+  });
 });
