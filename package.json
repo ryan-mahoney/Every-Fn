@@ -1,6 +1,6 @@
 {
     "name": "every-fn",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Helper that runs each function in a list until one fails",
     "repository": {
         "type": "git",

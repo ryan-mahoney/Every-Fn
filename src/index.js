@@ -1,9 +1,9 @@
 const handleReturnValue = (value, prevState) =>
   typeof value === "object"
     ? [true, Object.assign({}, prevState, value)]
-    : [value === false ? false : true, context];
+    : [value === false ? false : true, prevState];
 
-const callFunction = (fn, context) => handleReturnValue(fn(context), context);
+const callFunction = (fn, state) => handleReturnValue(fn(state), state);
 
 export default (functions, initialState = {}) =>
   functions.reduce(

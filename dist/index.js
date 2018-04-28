@@ -30,11 +30,11 @@
   }
 
   var handleReturnValue = function handleReturnValue(value, prevState) {
-    return (typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value)) === "object" ? [true, (0, _assign2.default)({}, prevState, value)] : [value === false ? false : true, context];
+    return (typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value)) === "object" ? [true, (0, _assign2.default)({}, prevState, value)] : [value === false ? false : true, prevState];
   };
 
-  var callFunction = function callFunction(fn, context) {
-    return handleReturnValue(fn(context), context);
+  var callFunction = function callFunction(fn, state) {
+    return handleReturnValue(fn(state), state);
   };
 
   exports.default = function (functions) {
