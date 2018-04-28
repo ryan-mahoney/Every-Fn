@@ -3,11 +3,13 @@ const handleReturnValue = (value, prevState) =>
     ? [true, Object.assign({}, prevState, value)]
     : [value === false ? false : true, prevState];
 
-const callFunction = (fn, state) => handleReturnValue(fn(state), state);
+const callFunction = async (fn, state) =>
+  handleReturnValue(await fn(state), state);
 
-export default (functions, initialState = {}) =>
-  functions.reduce(
-    ([doNext, state], fn) =>
-      doNext ? callFunction(fn, state) : [false, state],
-    [true, initialState || {}]
-  )[1];
+export default async (functions, initialState = {}) => {
+  const finalState = await functions.reduce(async (previousPromise, fn) => {
+    const [doNext, state] = await previousPromise;
+    return doNext ? await callFunction(fn, state) : [false, state];
+  }, Promise.resolve([true, initialState]));
+  return finalState[1];
+};
