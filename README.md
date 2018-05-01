@@ -3,17 +3,18 @@ Every-Fn
 
 Javascript helper function that iterates over an array of functions until one of the functions returns `false`.
 
-If a function returns and object, the values are merged into the original object state and sent to the next function as input.
+If a function returns an object, the values are merged into the original object state and sent to the next function as input.
 
-An initial state can optionally be provided.
+An initial state object may be provided.
 
-Individual functions can be either synchronous or asynchronous functions.
+Individual functions can be either synchronous or asynchronous, for this reason, `everyFn` returns a promise.
 
-The intent of the helper is to make it easier to write controller-like functionality by speficying a list of pure single-expression functions. Using single expression functions is optional.
+The intent of the helper is to make it easier to write controller-like functionality by speficying a list of small single-purpose functions.
 
-### Example Before
+### Example Before (pseudocode)
+`controller.js`
 ```javascript
-const loginCustomer = async (req, res) => {
+export const loginCustomer = async (req, res) => {
   const errors = validationErrors(req.body);
   if (errors) {
     jsonResponse(res, {
@@ -36,13 +37,37 @@ const loginCustomer = async (req, res) => {
 };
 ```
 
-### Example After
-The `Every-Fn` function allows each block of logic from the previous controller to be re-written as a single expression pure function. The individual functions perform no assignment and have no `return` keyword. While this style may seem more verbose, it is makes it easier to test each stage of the controller individually.
+### Example After (pseudocode)
+`controller.js`
+```
+import {
+  validateInput,
+  sendValidationErrors,
+  cleanUserInput,
+  findCustomer,
+  sendCustomerError,
+  sendLoginSuccess
+} from "./lib/customer-login.js";
 
+export const loginCustomer = async (req, res) =>
+  await everyFn(
+    [
+      validateInput,
+      sendValidationErrors,
+      cleanUserInput,
+      findCustomer,
+      sendCustomerError,
+      sendLoginSuccess
+    ],
+    { req, res }
+  )
+```
+
+`lib/customer-login.js`
 ```javascript
-const checkForValidationErrors = ({ req }) => ({ errors: validationErrors(req.body) });
+export const validateInput = ({ req }) => ({ errors: validationErrors(req.body) });
 
-const sendValidationErrors = ({ res, errors }) =>
+export const sendValidationErrors = ({ res, errors }) =>
   errors
     ? jsonResponse(res, {
         status: "error",
@@ -51,32 +76,21 @@ const sendValidationErrors = ({ res, errors }) =>
       }) || false
     : {};
 
-const cleanUserInput = ({ req }) => ({ data: cleanInput(req.body) });
+export const cleanUserInput = ({ req }) => ({ data: cleanInput(req.body) });
 
-const findCustomer = async ({ data }) => ({
+export const findCustomer = async ({ data }) => ({
   customer: await customerModel.findBy(data).first()
 });
 
-const sendNoCustomerError = ({ res, customer }) =>
+export const sendCustomerError = ({ res, customer }) =>
   !customer
     ? jsonResponse(res, { status: "error", error: "Account not found." }) ||
       false
     : {};
 
-const sendLoginResponse = ({ res, customer }) =>
+export const sendLoginSuccess = ({ res, customer }) =>
   jsonResponse(res, { status: "ok", payload: { customer: customer } });
-
-const loginCustomer = async (req, res) =>
-  await everyFn(
-    [
-      checkForValidationErrors,
-      sendValidationErrors,
-      cleanUserInput,
-      findCustomer,
-      sendNoCustomerError,
-      sendLoginResponse
-    ],
-    { req: req, res: res }
-  )
 ```
+
+
 
