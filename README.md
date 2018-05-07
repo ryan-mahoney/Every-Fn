@@ -30,5 +30,5 @@ export const loginCustomer = async (req, res) =>
       sendLoginSuccess
     ],
     { req, res }
-  )
+  );
 ```
