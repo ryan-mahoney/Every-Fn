@@ -18,4 +18,4 @@ const every = exports.every = async (functions, initialState = {}) => {
   return finalState[1];
 };
 
-const typed = exports.typed = (typeIn, typeOut, fn) => FunctionModel(Model(typeIn)).return(Model(typeOut))(fn);
+const typed = exports.typed = (typeIn, typeOut, fn) => fn === undefined ? FunctionModel(Model(typeIn))(typeOut) : FunctionModel(Model(typeIn)).return(Model(typeOut))(fn);
