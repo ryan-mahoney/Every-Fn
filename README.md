@@ -1,14 +1,18 @@
 # Every-Fn
 
-Javascript function that iterates over an array of functions until one of the functions returns `false`. The output of each function is merged into the output of the previously called function and passed as input to the next function call.
+Nano package that exports two functions: `every` and `typed`.
 
-An optional initial state object may be provided.
+---
 
-If an asynchronous function is specified, `Every-Fn` will `await` it's return before calling the next function.
+## Every
 
-### Example
+`every` is a function that iterates over an list of functions until one of the functions returns `false`. The output of each function is merged into the output of the previously called function and passed as input to the next function call.
 
-`sample-controller.js`
+An optional initial state object may be provided as a second argument.
+
+If an asynchronous function is specified, `every` will `await` it's return before calling the next function.
+
+For example: `sample-controller.js`
 
 ```
 import { every } from "every-fn";
@@ -17,19 +21,21 @@ import {
   sendValidationErrors,
   cleanUserInput,
   findCustomer,
-  sendCustomerError,
-  sendLoginSuccess
+  handleDbError,
+  sendCustomerExistsError,
+  sendLoginSuccessResponse
 } from "./lib/customer-login.js";
 
 export const loginCustomer = async (req, res) =>
-  await everyFn(
+  await every(
     [
       validateInput,
       sendValidationErrors,
       cleanUserInput,
       findCustomer,
-      sendCustomerError,
-      sendLoginSuccess
+      handleDbError,
+      sendCustomerExistsError,
+      sendLoginSuccessResponse
     ],
     { req, res }
   );
@@ -37,7 +43,11 @@ export const loginCustomer = async (req, res) =>
 
 ---
 
-### Example of Defining a Function With Runtime Type Checking
+### Typed
+
+The `typed` function is a helper that uses [ObjectModel](http://objectmodel.js.org/) for performing runtime type-checking.
+
+For example `lib/some-lib.js`
 
 ```
 import { typed } from "every-fn";
@@ -51,4 +61,19 @@ const { count } = nameLength({ name: "Javascript" });
 
 nameLength({ name: 100 });
 // TypeError: expecting arguments[0].name to be String, got Number 100
+```
+
+For async functions, don't check the return value, just pass two arguments:
+
+```
+typed(
+    { name: String },
+    async ({ name }) => ({
+      count: await new Promise(resolve =>
+        setTimeout(() => {
+          resolve(name.length);
+        }, 100)
+      )
+    })
+  )
 ```
