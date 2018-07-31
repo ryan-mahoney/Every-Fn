@@ -63,6 +63,22 @@ describe("typed/3", () => {
     })
   );
 
+  const nameLengthAsync = typed({ name: String }, async ({ name }) => ({
+    count: name.length
+  }));
+
+  const nameLengthAsyncReturnCheck = typed(
+    { name: String },
+    { count: Number },
+    async ({ name }) => ({
+      count: await new Promise(resolve =>
+        setTimeout(() => {
+          resolve(name.length);
+        }, 100)
+      )
+    })
+  );
+
   it("returns correct length", () => {
     const { count } = nameLength({ name: "Javascript" });
     assert.equal(count, 10);
@@ -78,5 +94,16 @@ describe("typed/3", () => {
     assert.throws(() => {
       nameLengthBadReturn({ name: "Javascript" });
     }, /TypeError: expecting return value\.count to be Number, got String "Hello"/);
+  });
+
+  it("validates only input of an async function", async () => {
+    const { count } = await nameLengthAsync({ name: "Javascript" });
+    assert.equal(count, 10);
+  });
+
+  it("can not handle return check of async function", () => {
+    assert.throws(() => {
+      nameLengthAsyncReturnCheck({ name: "Javascript" });
+    }, /TypeError: expecting return value\.count to be Number, got undefined/);
   });
 });

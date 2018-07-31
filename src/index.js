@@ -17,4 +17,6 @@ export const every = async (functions, initialState = {}) => {
 };
 
 export const typed = (typeIn, typeOut, fn) =>
-  FunctionModel(Model(typeIn)).return(Model(typeOut))(fn);
+  fn === undefined
+    ? FunctionModel(Model(typeIn))(typeOut)
+    : FunctionModel(Model(typeIn)).return(Model(typeOut))(fn);
