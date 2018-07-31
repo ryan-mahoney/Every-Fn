@@ -63,13 +63,14 @@ nameLength({ name: 100 });
 // TypeError: expecting arguments[0].name to be String, got Number 100
 ```
 
-For async functions, don't check the return value, just pass two arguments:
+For async function:
 
 ```javascript
 import { typed } from "every-fn";
 
 typed(
     { name: String },
+    Promise,
     async ({ name }) => ({
       count: await new Promise(resolve =>
         setTimeout(() => {
