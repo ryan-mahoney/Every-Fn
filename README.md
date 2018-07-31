@@ -14,7 +14,7 @@ If an asynchronous function is specified, `every` will `await` it's return befor
 
 For example: `sample-controller.js`
 
-```
+```javascript
 import { every } from "every-fn";
 import {
   validateInput,
@@ -49,7 +49,7 @@ The `typed` function is a helper that uses [ObjectModel](http://objectmodel.js.o
 
 For example `lib/some-lib.js`
 
-```
+```javascript
 import { typed } from "every-fn";
 
 export const nameLength = typed({ name: String }, { count: Number }, ({ name }) => ({
@@ -65,7 +65,9 @@ nameLength({ name: 100 });
 
 For async functions, don't check the return value, just pass two arguments:
 
-```
+```javascript
+import { typed } from "every-fn";
+
 typed(
     { name: String },
     async ({ name }) => ({
