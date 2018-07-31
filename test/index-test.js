@@ -1,11 +1,11 @@
 import assert from "assert";
-import everyFn from "./../src/index";
+import { every, typed } from "./../src/index";
 
-describe("helper", () => {
+describe("every/2", () => {
   it("allows last function", () => {
     let executed = false;
     const input = [() => true, () => true, () => (executed = true)];
-    everyFn(input).then(() => {
+    every(input).then(() => {
       assert.equal(executed, true);
     });
   });
@@ -13,7 +13,7 @@ describe("helper", () => {
   it("skips last function", () => {
     let executed = false;
     const input = [() => true, () => false, () => (executed = true)];
-    everyFn(input).then(() => {
+    every(input).then(() => {
       assert.equal(executed, false);
     });
   });
@@ -28,7 +28,7 @@ describe("helper", () => {
         total = context.value * 5;
       }
     ];
-    everyFn(input).then(() => {
+    every(input).then(() => {
       assert.equal(total, 10);
     });
   });
@@ -37,15 +37,46 @@ describe("helper", () => {
     let actual;
     const expected = { a: 10, b: 10 };
     const input = [() => ({ a: 5, b: 10 }), context => ({ a: 10 })];
-    everyFn(input).then((actual) => {
+    every(input).then(actual => {
       assert.deepEqual(expected, actual);
     });
   });
 
   it("utilizes initial state", () => {
     const expected = { a: true };
-    everyFn([], expected).then((actual) => {
+    every([], expected).then(actual => {
       assert.deepEqual(expected, actual);
     });
+  });
+});
+
+describe("typed/3", () => {
+  const nameLength = typed({ name: String }, { count: Number }, ({ name }) => ({
+    count: name.length
+  }));
+
+  const nameLengthBadReturn = typed(
+    { name: String },
+    { count: Number },
+    ({ name }) => ({
+      count: "Hello"
+    })
+  );
+
+  it("returns correct length", () => {
+    const { count } = nameLength({ name: "Javascript" });
+    assert.equal(count, 10);
+  });
+
+  it("returns type error on input", () => {
+    assert.throws(() => {
+      nameLength({ name: 100 });
+    }, /TypeError: expecting arguments\[0\]\.name to be String, got Number 100/);
+  });
+
+  it("returns type error on output", () => {
+    assert.throws(() => {
+      nameLengthBadReturn({ name: "Javascript" });
+    }, /TypeError: expecting return value\.count to be Number, got String "Hello"/);
   });
 });

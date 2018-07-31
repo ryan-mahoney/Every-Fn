@@ -1,15 +1,17 @@
-Every-Fn
-========
+# Every-Fn
 
-Javascript function that iterates over an array of functions until one of the functions returns `false`. The output of each function is combined and passed as input to the next function call.
+Javascript function that iterates over an array of functions until one of the functions returns `false`. The output of each function is merged into the output of the previously called function and passed as input to the next function call.
 
 An optional initial state object may be provided.
 
-If an asynchronous function is specified, `Every-Fn` will await it's response before calling the next function.
+If an asynchronous function is specified, `Every-Fn` will `await` it's return before calling the next function.
 
 ### Example
-`controller.js`
+
+`sample-controller.js`
+
 ```
+import { every } from "every-fn";
 import {
   validateInput,
   sendValidationErrors,
@@ -31,4 +33,22 @@ export const loginCustomer = async (req, res) =>
     ],
     { req, res }
   );
+```
+
+---
+
+### Example of Defining a Function With Runtime Type Checking
+
+```
+import { typed } from "every-fn";
+
+export const nameLength = typed({ name: String }, { count: Number }, ({ name }) => ({
+  count: name.length
+}));
+
+const { count } = nameLength({ name: "Javascript" });
+// assert.equal(count, 10);
+
+nameLength({ name: 100 });
+// TypeError: expecting arguments[0].name to be String, got Number 100
 ```
