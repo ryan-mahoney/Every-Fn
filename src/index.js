@@ -1,5 +1,3 @@
-import { FunctionModel, Model } from "objectmodel";
-
 const handleReturnValue = (value, prevState) =>
   typeof value === "object"
     ? [true, Object.assign({}, prevState, value)]
@@ -15,8 +13,3 @@ export const every = async (functions, initialState = {}) => {
   }, Promise.resolve([true, initialState]));
   return finalState[1];
 };
-
-export const typed = (typeIn, typeOut, fn) =>
-  fn === undefined
-    ? FunctionModel(Model(typeIn))(typeOut)
-    : FunctionModel(Model(typeIn)).return(Model(typeOut))(fn);

@@ -1,6 +1,6 @@
 {
   "name": "every-fn",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Helper that runs each function in a list until one fails",
   "repository": {
     "type": "git",
@@ -14,18 +14,16 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "build": "node_modules/babel-cli/bin/babel.js src --out-dir ./dist",
-    "test": "node_modules/mocha/bin/mocha --require babel-core/register"
+    "build": "node_modules/@babel/cli/bin/babel.js src --out-dir ./dist",
+    "test": "node_modules/mocha/bin/mocha --require @babel/register"
   },
   "devDependencies": {
-    "assert": "^1.4.1",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/register": "^7.12.1",
+    "assert": "^2.0.0",
     "babel-plugin-transform-es2015-modules-simple-commonjs": "^0.3.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "mocha": "^5.1.0"
-  },
-  "peerDependencies": {
-    "objectmodel": "^3.5.4"
+    "mocha": "^8.2.1"
   }
 }
